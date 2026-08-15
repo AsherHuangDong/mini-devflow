@@ -3,7 +3,7 @@ import './index.css';
 import type { Task } from '../../../interface/tasks';
 import { editTask } from '../../../api/tasks';
 
-const TaskItem = (props: { task: Task; onDeleteTask?: (task: Task) => void }) => {
+const TaskItem = (props: { task: Task; onDeleteTask?: (id: Task['id']) => void }) => {
 	const [comptleted, setComptleted] = useState(props.task.completed);
 	const [title, setTitle] = useState(props.task.title);
 	const [showInput, setShowInput] = useState(false);
@@ -35,7 +35,7 @@ const TaskItem = (props: { task: Task; onDeleteTask?: (task: Task) => void }) =>
 			) : (
 				<div onClick={() => setShowInput(true)}>{title}</div>
 			)}
-			<button onClick={() => props?.onDeleteTask?.(props.task)}>删除</button>
+			<button onClick={() => props?.onDeleteTask?.(props.task.id)}>删除</button>
 		</div>
 	);
 };

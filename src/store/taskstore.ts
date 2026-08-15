@@ -2,9 +2,12 @@ import { addTask, deleteTask, editTask, getTasks } from '../api/tasks';
 import type { Task, TaskFilterRequest } from '../interface/tasks';
 
 class TaskStore {
-	public tasks: Task[] = [];
-	public loading: boolean = false;
-	public error: unknown = '';
+	public state = {
+		tasks: [] as Task[],
+		loading: false,
+		error: '' as unknown,
+	};
+
 	private listeners = new Set<() => void>();
 
 	subscribe(listener: () => void) {
@@ -22,18 +25,18 @@ class TaskStore {
 	}
 
 	async fetchTasks(taskFilterRequest?: TaskFilterRequest): Promise<void> {
-		this.loading = true;
+		this.state.loading = true;
 		this.notify();
 		try {
 			const tasks = await getTasks(taskFilterRequest);
-			this.tasks = tasks;
+			this.state.tasks = tasks;
 			this.notify();
 		} catch (error) {
-			this.error = error;
+			this.state.error = error;
 			this.notify();
 			throw error;
 		} finally {
-			this.loading = false;
+			this.state.loading = false;
 			this.notify();
 		}
 	}
@@ -44,10 +47,16 @@ class TaskStore {
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
 		await deleteTask(id);
+		taskStore.state.tasks = taskStore.state.tasks.filter((t) => t.id !== id);
 	}
 
 	async fetchAddTask(title: Task['title']) {
+		if (!title.trim()) {
+			alert('任务名称不能为空');
+			return;
+		}
 		await addTask(title);
+		this.fetchTasks();
 	}
 }
 
