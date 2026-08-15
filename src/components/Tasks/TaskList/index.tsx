@@ -1,0 +1,12 @@
+import type { Task } from '../../../store/interface';
+import TaskItem from '../TaskItem';
+
+const TaskList = (
+	props: { taskList: Task[]; onDeleteTask?: (task: Task) => void } = { taskList: [] }
+) => {
+	return props.taskList.map((task) => (
+		<TaskItem key={task.id} task={task} onDeleteTask={props.onDeleteTask} />
+	));
+};
+
+export default TaskList;
