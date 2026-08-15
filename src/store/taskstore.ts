@@ -2,7 +2,7 @@ import { addTask, deleteTask, editTask, getTasks } from '../api/tasks';
 import type { Task, TaskFilterRequest } from '../interface/tasks';
 
 class TaskStore {
-	public state = {
+	private state = {
 		tasks: [] as Task[],
 		loading: false,
 		error: '' as unknown,
@@ -10,8 +10,16 @@ class TaskStore {
 
 	private listeners = new Set<() => void>();
 
+	getSnapshot() {
+		return this.state;
+	}
+
+	setSnapshot(newState: { tasks?: Task[]; loading?: boolean; error?: unknown }) {
+		this.state = { ...this.state, ...newState };
+		this.notify();
+	}
+
 	subscribe(listener: () => void) {
-		console.log('subscribe');
 		this.listeners.add(listener);
 		return () => {
 			this.listeners.delete(listener);
@@ -25,19 +33,15 @@ class TaskStore {
 	}
 
 	async fetchTasks(taskFilterRequest?: TaskFilterRequest): Promise<void> {
-		this.state.loading = true;
-		this.notify();
+		this.setSnapshot({ loading: true });
 		try {
 			const tasks = await getTasks(taskFilterRequest);
-			this.state.tasks = tasks;
-			this.notify();
+			this.setSnapshot({ tasks });
 		} catch (error) {
-			this.state.error = error;
-			this.notify();
+			this.setSnapshot({ error });
 			throw error;
 		} finally {
-			this.state.loading = false;
-			this.notify();
+			this.setSnapshot({ loading: false });
 		}
 	}
 
@@ -47,7 +51,7 @@ class TaskStore {
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
 		await deleteTask(id);
-		taskStore.state.tasks = taskStore.state.tasks.filter((t) => t.id !== id);
+		this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
 	}
 
 	async fetchAddTask(title: Task['title']) {
@@ -56,7 +60,7 @@ class TaskStore {
 			return;
 		}
 		await addTask(title);
-		this.fetchTasks();
+		await this.fetchTasks();
 	}
 }
 

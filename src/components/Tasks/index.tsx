@@ -5,7 +5,10 @@ import TaskList from './TaskList';
 import TaskFilter from './TaskFilter';
 
 const Tasks = () => {
-	const tasks = useSyncExternalStore(taskStore.subscribe, () => taskStore.state.tasks);
+	const tasks = useSyncExternalStore(
+		(listener) => taskStore.subscribe(listener),
+		() => taskStore.getSnapshot().tasks
+	);
 
 	useEffect(() => {
 		taskStore.fetchTasks();
@@ -13,9 +16,9 @@ const Tasks = () => {
 
 	return (
 		<div>
-			<TaskFilter onFilterChange={taskStore.fetchTasks} />
-			<TaskForm taggleAddTask={taskStore.fetchAddTask} />
-			<TaskList taskList={tasks} onDeleteTask={taskStore.fetchDeleteTask} />
+			<TaskFilter onFilterChange={(filter) => taskStore.fetchTasks(filter)} />
+			<TaskForm taggleAddTask={(title) => taskStore.fetchAddTask(title)} />
+			<TaskList taskList={tasks} onDeleteTask={(id) => taskStore.fetchDeleteTask(id)} />
 		</div>
 	);
 };
