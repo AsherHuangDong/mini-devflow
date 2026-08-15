@@ -3,15 +3,15 @@ import { useState, useEffect } from 'react';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import TaskFilter from './TaskFilter';
-import type { Task } from '../../store/interface';
+import type { Task, TaskFilterRequest } from '../../store/interface';
 import { deleteTask, getTasks } from '../../store/taskstore';
 import { addTask } from '../../store/taskstore';
 
 const Tasks = () => {
 	const [taskList, setTaskList] = useState<Task[]>([]);
 
-	const getTaskList = async (): Promise<void> => {
-		const tasks = await getTasks();
+	const getTaskList = async (filter?: TaskFilterRequest): Promise<void> => {
+		const tasks = await getTasks(filter);
 		setTaskList(tasks);
 	};
 
@@ -35,7 +35,7 @@ const Tasks = () => {
 
 	return (
 		<div>
-			<TaskFilter />
+			<TaskFilter onFilterChange={getTaskList} />
 			<TaskForm taggleAddTask={taggleAddTask} />
 			<TaskList taskList={taskList} onDeleteTask={onDeleteTask} />
 		</div>
