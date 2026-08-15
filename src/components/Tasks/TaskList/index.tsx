@@ -1,4 +1,4 @@
-import type { Task } from '../../../store/interface';
+import type { Task } from '../../../interface/tasks';
 import TaskItem from '../TaskItem';
 
 const TaskList = (

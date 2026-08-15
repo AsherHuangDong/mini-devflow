@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import type { Task } from '../../../store/interface';
-import { editTask } from '../../../store/taskstore';
 import './index.css';
+import type { Task } from '../../../interface/tasks';
+import { editTask } from '../../../api/tasks';
 
 const TaskItem = (props: { task: Task; onDeleteTask?: (task: Task) => void }) => {
 	const [comptleted, setComptleted] = useState(props.task.completed);

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { TaskFilterRequest } from '../../../store/interface';
+import { useEffect, useState } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
+import type { TaskFilterRequest } from '../../../interface/tasks';
 
 const TaskFilter = ({
 	onFilterChange,
@@ -39,20 +39,13 @@ const TaskFilter = ({
 		setFilter({ ...filter, completed: e.target.value === 'true' ? true : false });
 	};
 
-	const completed = useMemo(() => {
-		if (filter.completed === undefined) {
-			return '';
-		}
-		return filter.completed ? 'true' : 'false';
-	}, [filter.completed]);
-
 	return (
 		<div>
 			<label htmlFor="title">输入任务名称: </label>
 			<input type="text" value={title} onChange={handleTitleFilter} />
 			<label htmlFor="completed">选择任务状态：</label>
 			<select
-				value={completed}
+				value={filter.completed === undefined ? '' : filter.completed ? 'true' : 'false'}
 				id="completed"
 				name="completed"
 				onChange={handleCompletedFilter}

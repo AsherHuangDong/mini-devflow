@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import TaskFilter from './TaskFilter';
-import type { Task, TaskFilterRequest } from '../../store/interface';
-import { deleteTask, getTasks } from '../../store/taskstore';
-import { addTask } from '../../store/taskstore';
+import type { Task, TaskFilterRequest } from '../../interface/tasks';
+import { deleteTask, getTasks, addTask } from '../../api/tasks';
 
 const Tasks = () => {
 	const [taskList, setTaskList] = useState<Task[]>([]);
