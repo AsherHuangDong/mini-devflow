@@ -5,17 +5,36 @@ class TaskStore {
 	public tasks: Task[] = [];
 	public loading: boolean = false;
 	public error: unknown = '';
+	private listeners = new Set<() => void>();
+
+	subscribe(listener: () => void) {
+		console.log('subscribe');
+		this.listeners.add(listener);
+		return () => {
+			this.listeners.delete(listener);
+		};
+	}
+
+	private notify() {
+		this.listeners.forEach((listener) => {
+			listener();
+		});
+	}
 
 	async fetchTasks(taskFilterRequest?: TaskFilterRequest): Promise<void> {
 		this.loading = true;
+		this.notify();
 		try {
 			const tasks = await getTasks(taskFilterRequest);
 			this.tasks = tasks;
+			this.notify();
 		} catch (error) {
 			this.error = error;
+			this.notify();
 			throw error;
 		} finally {
 			this.loading = false;
+			this.notify();
 		}
 	}
 
