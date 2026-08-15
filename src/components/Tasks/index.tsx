@@ -1,17 +1,13 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import type { Task, TaskFilterRequest } from '../../interface/tasks';
+import taskStore from '../../store/taskstore';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import TaskFilter from './TaskFilter';
-import type { Task, TaskFilterRequest } from '../../interface/tasks';
-import { deleteTask, getTasks, addTask } from '../../api/tasks';
 
 const Tasks = () => {
-	const [taskList, setTaskList] = useState<Task[]>([]);
-
 	const getTaskList = async (filter?: TaskFilterRequest): Promise<void> => {
-		const tasks = await getTasks(filter);
-		setTaskList(tasks);
+		await taskStore.fetchTasks(filter);
 	};
 
 	const taggleAddTask = async (title: string): Promise<void> => {
@@ -19,13 +15,13 @@ const Tasks = () => {
 			alert('任务名称不能为空');
 			return;
 		}
-		await addTask(title);
+		await taskStore.fetchAddTask(title);
 		getTaskList();
 	};
 
 	const onDeleteTask = async (task: Task): Promise<void> => {
-		await deleteTask(task.id);
-		setTaskList(taskList.filter((t) => t.id !== task.id));
+		await taskStore.fetchDeleteTask(task.id);
+		taskStore.tasks = taskStore.tasks.filter((t) => t.id !== task.id);
 	};
 
 	useEffect(() => {
@@ -36,7 +32,7 @@ const Tasks = () => {
 		<div>
 			<TaskFilter onFilterChange={getTaskList} />
 			<TaskForm taggleAddTask={taggleAddTask} />
-			<TaskList taskList={taskList} onDeleteTask={onDeleteTask} />
+			<TaskList taskList={taskStore.tasks} onDeleteTask={onDeleteTask} />
 		</div>
 	);
 };
