@@ -8,7 +8,6 @@ const TaskFilter = ({
 	onFilterChange?: (taskFiletrRequest: TaskFilterRequest) => void;
 }) => {
 	const DefaultTaskFilterRequest = {
-		title: '',
 		completed: undefined,
 		startCreatedAt: undefined,
 		endCreatedAt: undefined,
@@ -20,12 +19,8 @@ const TaskFilter = ({
 	const debounceTitle = useDebounce(title, 300);
 
 	useEffect(() => {
-		onFilterChange?.(filter);
-	}, [filter, onFilterChange]);
-
-	useEffect(() => {
 		onFilterChange?.({ ...filter, title: debounceTitle });
-	}, [filter, debounceTitle, onFilterChange]);
+	}, [debounceTitle, filter, onFilterChange]);
 
 	const clearFilter = () => {
 		setFilter(DefaultTaskFilterRequest);
