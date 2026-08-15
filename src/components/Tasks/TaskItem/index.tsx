@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { Task } from '../../../store/interface';
 import { editTask } from '../../../store/taskstore';
 import './index.css';
@@ -23,23 +22,19 @@ const TaskItem = (props: { task: Task; onDeleteTask?: (task: Task) => void }) =>
 		await editTask(props.task.id, title, !comptleted);
 	};
 
-	const Title = useMemo(() => {
-		return showInput ? (
-			<input
-				type="text"
-				value={title}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-				onBlur={taggleChangeTitle}
-			/>
-		) : (
-			<div onClick={() => setShowInput(true)}>{title}</div>
-		);
-	}, [showInput, title]);
-
 	return (
 		<div className="taskItem">
 			<input type="checkbox" checked={comptleted} onChange={changeCompleted} />
-			{Title}
+			{showInput ? (
+				<input
+					type="text"
+					value={title}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+					onBlur={taggleChangeTitle}
+				/>
+			) : (
+				<div onClick={() => setShowInput(true)}>{title}</div>
+			)}
 			<button onClick={() => props?.onDeleteTask?.(props.task)}>删除</button>
 		</div>
 	);

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { TaskFilterRequest } from '../../../store/interface';
+import useDebounce from '../../../hooks/useDebounce';
 
 const TaskFilter = ({
 	onFilterChange,
@@ -14,13 +15,25 @@ const TaskFilter = ({
 	};
 
 	const [filter, setFilter] = useState<TaskFilterRequest>(DefaultTaskFilterRequest);
+	const [title, setTitle] = useState('');
+
+	const debounceTitle = useDebounce(title, 300);
 
 	useEffect(() => {
 		onFilterChange?.(filter);
 	}, [filter, onFilterChange]);
 
+	useEffect(() => {
+		onFilterChange?.({ ...filter, title: debounceTitle });
+	}, [filter, debounceTitle, onFilterChange]);
+
+	const clearFilter = () => {
+		setFilter(DefaultTaskFilterRequest);
+		setTitle('');
+	};
+
 	const handleTitleFilter = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		setFilter({ ...filter, title: e.target.value });
+		setTitle(e.target.value);
 	};
 
 	const handleCompletedFilter = (e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -41,7 +54,7 @@ const TaskFilter = ({
 	return (
 		<div>
 			<label htmlFor="title">输入任务名称: </label>
-			<input type="text" value={filter.title} onChange={handleTitleFilter} />
+			<input type="text" value={title} onChange={handleTitleFilter} />
 			<label htmlFor="completed">选择任务状态：</label>
 			<select
 				value={completed}
@@ -53,7 +66,7 @@ const TaskFilter = ({
 				<option value="true">已完成</option>
 				<option value="false">未完成</option>
 			</select>
-			<button onClick={() => setFilter(DefaultTaskFilterRequest)}>清除筛选</button>
+			<button onClick={clearFilter}>清除筛选</button>
 		</div>
 	);
 };
