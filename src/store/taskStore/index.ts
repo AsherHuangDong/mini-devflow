@@ -52,8 +52,17 @@ class TaskStore {
 	}
 
 	async fetchEditTask(id: Task['id'], title?: Task['title'], completed?: Task['completed']) {
-		await editTask(id, title, completed);
-		await this.fetchTasks();
+		try {
+			if (title === '') {
+				alert('任务名称不能为空');
+				return;
+			}
+			await editTask(id, title, completed);
+			await this.fetchTasks();
+		} catch (error) {
+			this.setSnapshot({ error });
+			throw error;
+		}
 	}
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
@@ -72,12 +81,20 @@ class TaskStore {
 	}
 
 	async fetchAddTask(title: Task['title']) {
-		if (!title.trim()) {
-			alert('任务名称不能为空');
-			return;
+		this.setSnapshot({ loading: true });
+		try {
+			if (title === '') {
+				alert('任务名称不能为空');
+				return;
+			}
+			await addTask(title);
+			await this.fetchTasks();
+		} catch (error) {
+			this.setSnapshot({ error });
+			throw error;
+		} finally {
+			this.setSnapshot({ loading: false });
 		}
-		await addTask(title);
-		await this.fetchTasks();
 	}
 }
 
