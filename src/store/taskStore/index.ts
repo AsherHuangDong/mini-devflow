@@ -6,6 +6,7 @@ class TaskStore {
 		tasks: [] as Task[],
 		loading: false,
 		error: '' as unknown,
+		deletingIds: new Set<Task['id']>(),
 	};
 
 	private listeners = new Set<() => void>();
@@ -14,7 +15,12 @@ class TaskStore {
 		return this.state;
 	}
 
-	setSnapshot(newState: { tasks?: Task[]; loading?: boolean; error?: unknown }) {
+	setSnapshot(newState: {
+		tasks?: Task[];
+		loading?: boolean;
+		error?: unknown;
+		deletingIds?: Set<Task['id']>;
+	}) {
 		this.state = { ...this.state, ...newState };
 		this.notify();
 	}
@@ -47,9 +53,11 @@ class TaskStore {
 
 	async fetchEditTask(id: Task['id'], title?: Task['title'], completed?: Task['completed']) {
 		await editTask(id, title, completed);
+		await this.fetchTasks();
 	}
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
+		this.setSnapshot({ deletingIds: new Set([...this.state.deletingIds, id]) });
 		await deleteTask(id);
 		this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
 	}

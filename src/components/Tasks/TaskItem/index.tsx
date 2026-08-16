@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import './index.css';
 import type { Task } from '../../../interface/tasks';
 import { editTask } from '../../../api/tasks';
+import taskStore from '../../../store/taskStore';
 
 const TaskItem = (props: { task: Task; onDeleteTask?: (id: Task['id']) => void }) => {
+	const deletingIds = useSyncExternalStore(
+		(listener) => taskStore.subscribe(listener),
+		() => taskStore.getSnapshot().deletingIds
+	);
 	const [comptleted, setComptleted] = useState(props.task.completed);
 	const [title, setTitle] = useState(props.task.title);
 	const [showInput, setShowInput] = useState(false);
+	const isDeleteing = deletingIds.has(props.task.id);
 
 	const taggleChangeTitle = async (e: React.FocusEvent<HTMLInputElement>): Promise<void> => {
 		const newTitle = e.target.value.trim();
@@ -35,7 +41,9 @@ const TaskItem = (props: { task: Task; onDeleteTask?: (id: Task['id']) => void }
 			) : (
 				<div onClick={() => setShowInput(true)}>{title}</div>
 			)}
-			<button onClick={() => props?.onDeleteTask?.(props.task.id)}>删除</button>
+			<button onClick={() => props?.onDeleteTask?.(props.task.id)} disabled={isDeleteing}>
+				{isDeleteing ? '删除中...' : '删除'}
+			</button>
 		</div>
 	);
 };
