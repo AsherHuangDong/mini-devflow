@@ -1,34 +1,34 @@
-import { useEffect, useState } from 'react';
-import useDebounce from '../../../hooks/useDebounce';
+import { useEffect, useRef, useState } from 'react';
 import type { TaskFilterRequest } from '../../../interface/tasks';
+import taskStore from '../../../store/taskStore';
+import useDebounce from '../../../hooks/useDebounce';
 
-const TaskFilter = ({
-	onFilterChange,
-}: {
-	onFilterChange?: (taskFiletrRequest: TaskFilterRequest) => void;
-}) => {
-	const DefaultTaskFilterRequest = {
-		completed: undefined,
-		startCreatedAt: undefined,
-		endCreatedAt: undefined,
-	};
+const DefaultTaskFilterRequest = {
+	title: '',
+	completed: undefined,
+	startCreatedAt: undefined,
+	endCreatedAt: undefined,
+};
 
+const TaskFilter = () => {
 	const [filter, setFilter] = useState<TaskFilterRequest>(DefaultTaskFilterRequest);
-	const [title, setTitle] = useState('');
-
-	const debounceTitle = useDebounce(title, 300);
+	const isFirstRender = useRef(true);
+	const delayFilter = useDebounce(filter, 300) as TaskFilterRequest;
 
 	useEffect(() => {
-		onFilterChange?.({ ...filter, title: debounceTitle });
-	}, [debounceTitle, filter, onFilterChange]);
+		if (isFirstRender.current) {
+			isFirstRender.current = false;
+			return;
+		}
+		taskStore.fetchTasks(delayFilter);
+	}, [delayFilter]);
 
 	const clearFilter = () => {
 		setFilter(DefaultTaskFilterRequest);
-		setTitle('');
 	};
 
 	const handleTitleFilter = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		setTitle(e.target.value);
+		setFilter({ ...filter, title: e.target.value });
 	};
 
 	const handleCompletedFilter = (e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -42,7 +42,7 @@ const TaskFilter = ({
 	return (
 		<div>
 			<label htmlFor="title">输入任务名称: </label>
-			<input type="text" value={title} onChange={handleTitleFilter} />
+			<input type="text" value={filter.title} onChange={handleTitleFilter} />
 			<label htmlFor="completed">选择任务状态：</label>
 			<select
 				value={filter.completed === undefined ? '' : filter.completed ? 'true' : 'false'}

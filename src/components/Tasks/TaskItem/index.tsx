@@ -15,7 +15,7 @@ const TaskItem = (props: { task: Task }) => {
 			if (newTitle === '') {
 				throw new Error('任务名称不能为空');
 			}
-			await taskStore.fetchEditTask(props.task.id, newTitle);
+			await taskStore.fetchEditTask(props.task.id, newTitle, completed);
 			setEditing(false);
 		} catch (error) {
 			alert(error);
@@ -29,12 +29,7 @@ const TaskItem = (props: { task: Task }) => {
 	};
 
 	const changeCompleted = async (): Promise<void> => {
-		try {
-			await taskStore.fetchEditTask(props.task.id, title, !completed);
-			setcompleted(!completed);
-		} catch (error) {
-			alert(error);
-		}
+		setcompleted(!completed);
 	};
 
 	const deleteTask = async (): Promise<void> => {

@@ -15,11 +15,11 @@ const Tasks = () => {
 	}, []);
 
 	return (
-		<div>
-			<TaskFilter onFilterChange={(filter) => taskStore.fetchTasks(filter)} />
-			<TaskForm taggleAddTask={(title) => taskStore.fetchAddTask(title)} />
+		<>
+			<TaskFilter />
+			<TaskForm />
 			<TaskList taskList={tasks} />
-		</div>
+		</>
 	);
 };
 
