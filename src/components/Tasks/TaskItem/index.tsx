@@ -12,6 +12,9 @@ const TaskItem = (props: { task: Task }) => {
 	const saveEdit = async (): Promise<void> => {
 		try {
 			const newTitle = title.trim();
+			if (newTitle === '') {
+				throw new Error('任务名称不能为空');
+			}
 			await taskStore.fetchEditTask(props.task.id, newTitle);
 			setEditing(false);
 		} catch (error) {

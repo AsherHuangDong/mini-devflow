@@ -51,26 +51,13 @@ class TaskStore {
 	}
 
 	async fetchEditTask(id: Task['id'], title?: Task['title'], completed?: Task['completed']) {
-		try {
-			if (title === '') {
-				throw new Error('任务名称不能为空');
-			}
-			await editTask(id, title, completed);
-			await this.fetchTasks();
-		} catch (error) {
-			console.log(error);
-			throw error;
-		}
+		await editTask(id, title, completed);
+		await this.fetchTasks();
 	}
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
-		try {
-			await deleteTask(id);
-			this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
-		} catch (error) {
-			console.log(error);
-			throw error;
-		}
+		await deleteTask(id);
+		this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
 	}
 
 	async fetchAddTask(title: Task['title']) {
