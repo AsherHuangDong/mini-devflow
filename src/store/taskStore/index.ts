@@ -6,7 +6,6 @@ class TaskStore {
 		tasks: [] as Task[],
 		loading: false,
 		error: '' as unknown,
-		deletingIds: new Set<Task['id']>(),
 	};
 
 	private listeners = new Set<() => void>();
@@ -66,17 +65,12 @@ class TaskStore {
 	}
 
 	async fetchDeleteTask(id: Task['id']): Promise<void> {
-		this.setSnapshot({ deletingIds: new Set([...this.state.deletingIds, id]) });
 		try {
 			await deleteTask(id);
 			this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
 		} catch (error) {
 			this.setSnapshot({ error });
 			throw error;
-		} finally {
-			this.setSnapshot({
-				deletingIds: new Set([...this.state.deletingIds].filter((id) => id !== id)),
-			});
 		}
 	}
 

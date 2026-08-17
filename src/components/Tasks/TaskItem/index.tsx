@@ -1,49 +1,77 @@
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import './index.css';
 import type { Task } from '../../../interface/tasks';
-import { editTask } from '../../../api/tasks';
 import taskStore from '../../../store/taskStore';
 
-const TaskItem = (props: { task: Task; onDeleteTask?: (id: Task['id']) => void }) => {
-	const deletingIds = useSyncExternalStore(
-		(listener) => taskStore.subscribe(listener),
-		() => taskStore.getSnapshot().deletingIds
-	);
+const TaskItem = (props: { task: Task }) => {
 	const [comptleted, setComptleted] = useState(props.task.completed);
 	const [title, setTitle] = useState(props.task.title);
-	const [showInput, setShowInput] = useState(false);
-	const deleting = deletingIds.has(props.task.id);
+	const [editing, setEditing] = useState(false);
+	const [deleting, setDeleting] = useState(false);
 
-	const taggleChangeTitle = async (e: React.FocusEvent<HTMLInputElement>): Promise<void> => {
-		const newTitle = e.target.value.trim();
-		if (newTitle) {
-			setTitle(newTitle);
-			await editTask(props.task.id, newTitle);
+	const saveEdit = async (): Promise<void> => {
+		try {
+			const newTitle = title.trim();
+			if (newTitle) {
+				setTitle(newTitle);
+				await taskStore.fetchEditTask(props.task.id, newTitle);
+			}
+			setEditing(false);
+		} catch (error) {
+			alert(error);
 		}
-		setShowInput(false);
+	};
+
+	const cancelEdit = (): void => {
+		setTitle(props.task.title);
+		setComptleted(props.task.completed);
+		setEditing(false);
 	};
 
 	const changeCompleted = async (): Promise<void> => {
-		setComptleted(!comptleted);
-		await editTask(props.task.id, title, !comptleted);
+		try {
+			await taskStore.fetchEditTask(props.task.id, title, !comptleted);
+			setComptleted(!comptleted);
+		} catch (error) {
+			alert(error);
+		}
+	};
+
+	const deleteTask = async (): Promise<void> => {
+		setDeleting(true);
+		try {
+			await taskStore.fetchDeleteTask(props.task.id);
+		} catch (e) {
+			alert(e);
+		} finally {
+			setDeleting(false);
+		}
 	};
 
 	return (
 		<div className="taskItem">
 			<input type="checkbox" checked={comptleted} onChange={changeCompleted} />
-			{showInput ? (
-				<input
-					type="text"
-					value={title}
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-					onBlur={taggleChangeTitle}
-				/>
+			{editing ? (
+				<>
+					<input
+						type="text"
+						value={title}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							setTitle(e.target.value)
+						}
+					/>
+					<button onClick={saveEdit}>保存</button>
+					<button onClick={cancelEdit}>取消</button>
+				</>
 			) : (
-				<div onClick={() => setShowInput(true)}>{title}</div>
+				<>
+					<div onClick={() => setEditing(true)}>{title}</div>
+
+					<button onClick={deleteTask} disabled={deleting}>
+						{deleting ? '删除中...' : '删除'}
+					</button>
+				</>
 			)}
-			<button onClick={() => props?.onDeleteTask?.(props.task.id)} disabled={deleting}>
-				{deleting ? '删除中...' : '删除'}
-			</button>
 		</div>
 	);
 };

@@ -18,7 +18,7 @@ const Tasks = () => {
 		<div>
 			<TaskFilter onFilterChange={(filter) => taskStore.fetchTasks(filter)} />
 			<TaskForm taggleAddTask={(title) => taskStore.fetchAddTask(title)} />
-			<TaskList taskList={tasks} onDeleteTask={(id) => taskStore.fetchDeleteTask(id)} />
+			<TaskList taskList={tasks} />
 		</div>
 	);
 };
