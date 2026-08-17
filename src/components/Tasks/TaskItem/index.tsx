@@ -4,7 +4,7 @@ import type { Task } from '../../../interface/tasks';
 import taskStore from '../../../store/taskStore';
 
 const TaskItem = (props: { task: Task }) => {
-	const [comptleted, setComptleted] = useState(props.task.completed);
+	const [completed, setcompleted] = useState(props.task.completed);
 	const [title, setTitle] = useState(props.task.title);
 	const [editing, setEditing] = useState(false);
 	const [deleting, setDeleting] = useState(false);
@@ -12,10 +12,7 @@ const TaskItem = (props: { task: Task }) => {
 	const saveEdit = async (): Promise<void> => {
 		try {
 			const newTitle = title.trim();
-			if (newTitle) {
-				setTitle(newTitle);
-				await taskStore.fetchEditTask(props.task.id, newTitle);
-			}
+			await taskStore.fetchEditTask(props.task.id, newTitle);
 			setEditing(false);
 		} catch (error) {
 			alert(error);
@@ -24,14 +21,14 @@ const TaskItem = (props: { task: Task }) => {
 
 	const cancelEdit = (): void => {
 		setTitle(props.task.title);
-		setComptleted(props.task.completed);
+		setcompleted(props.task.completed);
 		setEditing(false);
 	};
 
 	const changeCompleted = async (): Promise<void> => {
 		try {
-			await taskStore.fetchEditTask(props.task.id, title, !comptleted);
-			setComptleted(!comptleted);
+			await taskStore.fetchEditTask(props.task.id, title, !completed);
+			setcompleted(!completed);
 		} catch (error) {
 			alert(error);
 		}
@@ -50,9 +47,9 @@ const TaskItem = (props: { task: Task }) => {
 
 	return (
 		<div className="taskItem">
-			<input type="checkbox" checked={comptleted} onChange={changeCompleted} />
 			{editing ? (
 				<>
+					<input type="checkbox" checked={completed} onChange={changeCompleted} />
 					<input
 						type="text"
 						value={title}
@@ -64,13 +61,17 @@ const TaskItem = (props: { task: Task }) => {
 					<button onClick={cancelEdit}>取消</button>
 				</>
 			) : (
-				<>
-					<div onClick={() => setEditing(true)}>{title}</div>
+				<div className="taskItemContent" onClick={() => setEditing(true)}>
+					<span className={props.task.completed ? 'complete completed' : 'complete'}>
+						{props.task.completed ? '已完成' : '未完成'}
+					</span>
+
+					<div>{props.task.title}</div>
 
 					<button onClick={deleteTask} disabled={deleting}>
 						{deleting ? '删除中...' : '删除'}
 					</button>
-				</>
+				</div>
 			)}
 		</div>
 	);

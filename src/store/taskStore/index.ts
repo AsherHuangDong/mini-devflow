@@ -53,13 +53,12 @@ class TaskStore {
 	async fetchEditTask(id: Task['id'], title?: Task['title'], completed?: Task['completed']) {
 		try {
 			if (title === '') {
-				alert('任务名称不能为空');
-				return;
+				throw new Error('任务名称不能为空');
 			}
 			await editTask(id, title, completed);
 			await this.fetchTasks();
 		} catch (error) {
-			this.setSnapshot({ error });
+			console.log(error);
 			throw error;
 		}
 	}
@@ -69,7 +68,7 @@ class TaskStore {
 			await deleteTask(id);
 			this.setSnapshot({ tasks: this.state.tasks.filter((t) => t.id !== id) });
 		} catch (error) {
-			this.setSnapshot({ error });
+			console.log(error);
 			throw error;
 		}
 	}
@@ -85,7 +84,6 @@ class TaskStore {
 			await this.fetchTasks();
 		} catch (error) {
 			this.setSnapshot({ error });
-			throw error;
 		} finally {
 			this.setSnapshot({ loading: false });
 		}

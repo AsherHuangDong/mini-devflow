@@ -3,3 +3,17 @@
     justify-content: center;
     align-items: center;
 }
+
+.taskItemContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.complete {
+    margin: 0 10px;
+}
+
+.completed {
+    color: green;
+}
