@@ -28,15 +28,15 @@ const TaskFilter = () => {
 	};
 
 	const handleTitleFilter = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		setFilter({ ...filter, title: e.target.value });
+		setFilter((prev) => ({ ...prev, title: e.target.value }));
 	};
 
 	const handleCompletedFilter = (e: React.ChangeEvent<HTMLSelectElement>): void => {
 		if (e.target.value === '') {
-			setFilter({ ...filter, completed: undefined });
+			setFilter((prev) => ({ ...prev, completed: undefined }));
 			return;
 		}
-		setFilter({ ...filter, completed: e.target.value === 'true' ? true : false });
+		setFilter((prev) => ({ ...prev, completed: e.target.value === 'true' ? true : false }));
 	};
 
 	return (
