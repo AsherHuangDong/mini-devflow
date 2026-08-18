@@ -46,10 +46,13 @@ class TaskStore {
 			if (requestId !== this.fetchTasksRequestId) return;
 			this.setSnapshot({ tasks });
 		} catch (error) {
+			if (requestId !== this.fetchTasksRequestId) return;
 			this.setSnapshot({ error });
 			throw error;
 		} finally {
-			this.setSnapshot({ loading: false });
+			if (requestId === this.fetchTasksRequestId) {
+				this.setSnapshot({ loading: false });
+			}
 		}
 	}
 
