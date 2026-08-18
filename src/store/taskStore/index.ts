@@ -2,6 +2,7 @@ import { addTask, deleteTask, editTask, getTasks } from '../../api/tasks';
 import type { Task, TaskFilterRequest } from '../../interface/tasks';
 
 class TaskStore {
+	private fetchTasksRequestId: number = 0;
 	private state = {
 		tasks: [] as Task[],
 		loading: false,
@@ -38,9 +39,11 @@ class TaskStore {
 	}
 
 	async fetchTasks(taskFilterRequest?: TaskFilterRequest): Promise<void> {
+		const requestId = ++this.fetchTasksRequestId;
 		this.setSnapshot({ loading: true });
 		try {
 			const tasks = await getTasks(taskFilterRequest);
+			if (requestId !== this.fetchTasksRequestId) return;
 			this.setSnapshot({ tasks });
 		} catch (error) {
 			this.setSnapshot({ error });
