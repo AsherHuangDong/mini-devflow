@@ -70,11 +70,11 @@ export function debounce<T extends (...args: never[]) => unknown>(
 // }
 
 export const buildQueryString = (params: Record<string, unknown>) => {
-	Object.keys(params)
+	return Object.keys(params)
 		.map((key) => {
 			const p = params[key];
-			if (typeof p === 'string') return `${key}=${p}`;
-			return `${key}=${JSON.stringify(p)}`;
+			if (typeof p === 'object') return `${key}=${JSON.stringify(p)}`;
+			return `${key}=${p}`;
 		})
 		.join('&');
 };
