@@ -14,7 +14,7 @@ export const request = async <T>(config: RequestConfig): Promise<T> => {
 				...config?.headers,
 			},
 			method: config.method,
-			body: config?.data ? JSON.stringify(config.data) : undefined,
+			body: config.data !== undefined ? JSON.stringify(config.data) : undefined,
 			signal: config?.signal,
 		};
 

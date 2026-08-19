@@ -69,12 +69,36 @@ export function debounce<T extends (...args: never[]) => unknown>(
 // 	};
 // }
 
-export const buildQueryString = (params: Record<string, unknown>) => {
-	return Object.keys(params)
-		.map((key) => {
-			const p = params[key];
-			if (typeof p === 'object') return `${key}=${JSON.stringify(p)}`;
-			return `${key}=${p}`;
-		})
-		.join('&');
+type QueryParams = Record<string, unknown>;
+
+export const buildQueryString = (params: QueryParams): string => {
+	const searchParams = new URLSearchParams();
+
+	for (const [key, value] of Object.entries(params)) {
+		if (value === undefined) {
+			continue;
+		}
+
+		searchParams.set(key, typeof value === 'string' ? value : JSON.stringify(value));
+	}
+
+	return searchParams.toString();
+};
+
+export const parseQueryString = (queryString: string): QueryParams => {
+	const searchParams = new URLSearchParams(
+		queryString.startsWith('?') ? queryString.slice(1) : queryString
+	);
+
+	const result: QueryParams = {};
+
+	for (const [key, value] of searchParams.entries()) {
+		try {
+			result[key] = JSON.parse(value);
+		} catch {
+			result[key] = value;
+		}
+	}
+
+	return result;
 };
