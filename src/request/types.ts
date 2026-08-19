@@ -5,7 +5,7 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export interface RequestConfig {
 	url: string;
 	method: HttpMethod;
-	params?: Record<string, string>;
+	params?: Record<string, unknown>;
 	data?: unknown;
 	headers?: Record<string, string>;
 	signal?: AbortSignal;
