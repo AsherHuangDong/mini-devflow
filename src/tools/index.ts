@@ -85,20 +85,20 @@ export const buildQueryString = (params: QueryParams): string => {
 	return searchParams.toString();
 };
 
-export const parseQueryString = (queryString: string): QueryParams => {
-	const searchParams = new URLSearchParams(
-		queryString.startsWith('?') ? queryString.slice(1) : queryString
-	);
+// export const parseQueryString = (queryString: string): QueryParams => {
+// 	const searchParams = new URLSearchParams(
+// 		queryString.startsWith('?') ? queryString.slice(1) : queryString
+// 	);
 
-	const result: QueryParams = {};
+// 	const result: QueryParams = {};
 
-	for (const [key, value] of searchParams.entries()) {
-		try {
-			result[key] = JSON.parse(value);
-		} catch {
-			result[key] = value;
-		}
-	}
+// 	for (const [key, value] of searchParams.entries()) {
+// 		try {
+// 			result[key] = JSON.parse(value);
+// 		} catch {
+// 			result[key] = value;
+// 		}
+// 	}
 
-	return result;
-};
+// 	return result;
+// };
