@@ -32,7 +32,8 @@ const TaskItem = (props: { task: Task }) => {
 		setcompleted(!completed);
 	};
 
-	const deleteTask = async (): Promise<void> => {
+	const deleteTask = async (e: React.MouseEvent): Promise<void> => {
+		e.stopPropagation();
 		setDeleting(true);
 		try {
 			await taskStore.fetchDeleteTask(props.task.id);

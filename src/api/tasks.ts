@@ -9,7 +9,7 @@ export const getTasks = async (taskFilterRequest?: TaskFilterRequest): Promise<T
 		page: taskFilterRequest?.page || 1,
 		pageSize: taskFilterRequest?.pageSize || 10,
 	};
-	await request({ url: URLS.tasks.list, method: 'GET', data: req });
+	await request({ url: URLS.tasks.list, method: 'GET', params: req });
 	const tasksString = getStorage('tasks');
 	const tasks: Task[] = tasksString ? JSON.parse(tasksString) : [];
 	const resultTasks = tasks.filter((task) => {
@@ -37,7 +37,7 @@ export const getTasks = async (taskFilterRequest?: TaskFilterRequest): Promise<T
 };
 
 export const addTask = async (title: Task['title']): Promise<void> => {
-	await request({ url: URLS.tasks.list, method: 'POST', data: { title } });
+	await request({ url: URLS.tasks.add, method: 'POST', data: { title } });
 	const task = {} as Task;
 	task.id = `${Date.now()}`;
 	task.title = title;
@@ -49,7 +49,7 @@ export const addTask = async (title: Task['title']): Promise<void> => {
 };
 
 export const deleteTask = async (id: Task['id']): Promise<void> => {
-	await request({ url: URLS.tasks.list, method: 'DELETE', params: { id } });
+	await request({ url: URLS.tasks.delete(id), method: 'DELETE' });
 	const tasks = await getTasks();
 	const newTasks = tasks.filter((task) => task.id !== id);
 	setStorage('tasks', JSON.stringify(newTasks));
@@ -60,7 +60,7 @@ export const editTask = async (
 	title?: Task['title'],
 	completed?: Task['completed']
 ): Promise<void> => {
-	await request({ url: URLS.tasks.list, method: 'POST', data: { id, title, completed } });
+	await request({ url: URLS.tasks.edit(id), method: 'PUT', data: { title, completed } });
 	const tasks = await getTasks();
 	const newTasks = tasks.map((task) =>
 		task.id === id
