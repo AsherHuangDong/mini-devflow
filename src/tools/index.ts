@@ -86,9 +86,10 @@ export const buildQueryString = (params: QueryParams): string => {
 };
 
 export const parseQueryString = (queryString: string): QueryParams => {
-	const searchParams = new URLSearchParams(
-		queryString.startsWith('?') ? queryString.slice(1) : queryString
-	);
+	// 如果包含 ?，只取 ? 后面的查询参数部分
+	const query = queryString.includes('?') ? queryString.split('?')[1] : queryString;
+
+	const searchParams = new URLSearchParams(query);
 
 	const result: QueryParams = {};
 
