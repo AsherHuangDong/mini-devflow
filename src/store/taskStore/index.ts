@@ -1,5 +1,5 @@
-import { addTask, deleteTask, editTask, getTasks } from '../../api/tasks';
-import type { Task, TaskFilterRequest } from '../../interface/tasks';
+import { addTask, deleteTask, editTask, getTasks } from '../../api/task';
+import type { Task, TaskFilterRequest } from '../../interface/task';
 
 class TaskStore {
 	private fetchTasksRequestId: number = 0;

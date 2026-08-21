@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { TaskFilterRequest } from '../../../interface/tasks';
+import type { TaskFilterRequest } from '../../../interface/task';
 import taskStore from '../../../store/taskStore';
 import useDebounce from '../../../hooks/useDebounce';
 

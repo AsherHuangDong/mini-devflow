@@ -1,4 +1,4 @@
-import type { Task } from '../../../interface/tasks';
+import type { Task } from '../../../interface/task';
 import TaskItem from '../TaskItem';
 
 const TaskList = (props: { taskList: Task[] } = { taskList: [] }) => {

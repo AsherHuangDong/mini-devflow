@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './index.css';
-import type { Task } from '../../../interface/tasks';
+import type { Task } from '../../../interface/task';
 import taskStore from '../../../store/taskStore';
 
 const TaskItem = (props: { task: Task }) => {
